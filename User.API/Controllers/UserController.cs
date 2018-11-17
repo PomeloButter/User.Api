@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using User.API.Data;
+using User.API.Models;
 
 namespace User.API.Controllers
 {
@@ -23,12 +25,44 @@ namespace User.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var user = _userContext.AppUsers
+            var user =await _userContext.AppUsers
                 .AsTracking()
                 .Include(u => u.Properties)
-                .SingleOrDefault(u => u.Id == UserIdentity.UserId);
+                .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId);
 
             if (user == null) throw new UserOperationExpetion($"错误的用户上下文Id {UserIdentity.UserId} ");
+            return Json(user);
+        }
+        [HttpPatch]
+        public async Task<IActionResult> Patch([FromBody]JsonPatchDocument<AppUser> jsonPatchDocument)
+        {
+            var user = await _userContext.AppUsers             
+                .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId);
+
+            jsonPatchDocument.ApplyTo(user);
+
+            foreach (var property in user.Properties)
+            {
+                _userContext.Entry(property).State = EntityState.Detached;
+            }
+
+            var originProperties =await _userContext.UserProperties.AsNoTracking().Where(u=>u.AppUserId==UserIdentity.UserId).ToListAsync();
+            var allProperties = originProperties.Union(user.Properties).Distinct();
+
+            var removeProperties = originProperties.Except(user.Properties);
+            var newProperties = allProperties.Except(originProperties);
+
+            foreach (var property in removeProperties)
+            {
+                _userContext.Remove(property);
+            }
+            foreach (var property in newProperties)
+            {
+                _userContext.Add(property);
+            }
+
+            _userContext.Update(user);
+            _userContext.SaveChanges();
             return Json(user);
         }
     }
