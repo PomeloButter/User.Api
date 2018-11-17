@@ -10,6 +10,11 @@ namespace User.API.Data
 
         }
 
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<UserProperty> UserProperties { get; set; }
+        public DbSet<UserTag> UserTags { get; set; }
+        public DbSet<BpFile> BpFiles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<AppUser>().ToTable("Users").HasKey(u => u.Id);
