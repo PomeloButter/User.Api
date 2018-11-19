@@ -70,11 +70,14 @@ namespace User.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CheckOrCreate(string phone)
         {
-            if (!await _userContext.AppUsers.AnyAsync(u => u.Phone == phone))
+            var user =await _userContext.AppUsers.SingleOrDefaultAsync(u => u.Phone == phone);
+            if (user==null)
             {
-                _userContext.AppUsers.Add(new AppUser() {Phone = phone});
+                user = new AppUser() {Phone = phone};
+                _userContext.AppUsers.Add(user);
+                await _userContext.SaveChangesAsync();
             }
-            return Ok();
+            return Ok(user.Id);
         }
     }
 }

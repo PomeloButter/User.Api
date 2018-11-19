@@ -35,7 +35,7 @@ namespace User.Identity.Authentication
                 return;
             }
 
-            var userId = _userService.CheckOrCreate(phone);
+            var userId =await _userService.CheckOrCreate(phone);
             if (userId<=0)
             {
                 context.Result = errorValidationResult;
