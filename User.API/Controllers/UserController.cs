@@ -35,7 +35,7 @@ namespace User.API.Controllers
         }
         [HttpPatch]
         public async Task<IActionResult> Patch([FromBody]JsonPatchDocument<AppUser> jsonPatchDocument)
-        {
+        {                  
             var user = await _userContext.AppUsers             
                 .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId);
 

@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.API", "User.API\User.A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{05C84C67-E564-4541-9A06-6460F1444064}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.API.UnitTest", "User.API.UnitTest\User.API.UnitTest.csproj", "{8A4271CD-919F-49FD-9012-07282E640139}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.API.UnitTest", "User.API.UnitTest\User.API.UnitTest.csproj", "{8A4271CD-919F-49FD-9012-07282E640139}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Identity", "User.Identity\User.Identity.csproj", "{5F4D4225-9B4F-41FC-B46E-E484B3A8731A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Identity", "User.Identity\User.Identity.csproj", "{5F4D4225-9B4F-41FC-B46E-E484B3A8731A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway.API", "API.Gateway\Gateway.API.csproj", "{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{5F4D4225-9B4F-41FC-B46E-E484B3A8731A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F4D4225-9B4F-41FC-B46E-E484B3A8731A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F4D4225-9B4F-41FC-B46E-E484B3A8731A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
