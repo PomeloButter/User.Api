@@ -37,10 +37,16 @@ namespace Resilience
 
         public async Task<HttpResponseMessage> PostAsync<T>(string url, T item, string authorizationToken, string requestId = null, string authorizationMethod = "Bearer")
         {
-            return await DoPostAsync(HttpMethod.Post, item, url, authorizationToken, requestId, authorizationMethod);
+            var requestMessage = CreateHttpRequestMessage(HttpMethod.Post, url, item);
+            return await DoPostAsync(HttpMethod.Post, requestMessage, url, authorizationToken, requestId, authorizationMethod);
+        }
+        public async Task<HttpResponseMessage> PostAsync(string url, Dictionary<string, string> values, string authorizationToken, string requestId = null, string authorizationMethod = "Bearer")
+        {
+            var requestMessage = CreateHttpRequestMessage(HttpMethod.Post, url, values);
+            return await DoPostAsync(HttpMethod.Post, requestMessage, url, authorizationToken, requestId, authorizationMethod);
         }
 
-        private Task<HttpResponseMessage> DoPostAsync<T>(HttpMethod method, T item, string url, string authorizationToken, string requestId = null, string authorizationMethod = "Bearer")
+        private Task<HttpResponseMessage> DoPostAsync(HttpMethod method, HttpRequestMessage requestMessage, string url, string authorizationToken, string requestId = null, string authorizationMethod = "Bearer")
         {
             if (method != HttpMethod.Post && method != HttpMethod.Put)
             {
@@ -49,9 +55,8 @@ namespace Resilience
             var origin = GetOriginFromUri(url);
             return HttpInvoker(origin, async () =>
             {
-                var requestMessage = new HttpRequestMessage(method, url);
+              
                 SetAuthorizationHeader(requestMessage);
-                requestMessage.Content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "appplication/json");
                 if (authorizationToken != null)
                 {
                     requestMessage.Headers.Authorization = new AuthenticationHeaderValue(authorizationMethod, authorizationToken);
@@ -68,8 +73,7 @@ namespace Resilience
                 return response;
             });
         }
-
-
+  
         private async Task<T> HttpInvoker<T>(string origin, Func<Task<T>> action)
         {
             var normalizedOrigin = NormalizeOrigin(origin);
@@ -81,7 +85,14 @@ namespace Resilience
             return await policyWrap.ExecuteAsync(action, new Context(normalizedOrigin));
         }
 
-
+        private HttpRequestMessage CreateHttpRequestMessage<T>(HttpMethod httpMethod,string url,T item)
+        {
+            return new HttpRequestMessage(httpMethod,url){Content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "appplication/json") };
+        }
+        private HttpRequestMessage CreateHttpRequestMessage(HttpMethod httpMethod, string url, Dictionary<string,string> item)
+        {
+           return  new HttpRequestMessage(httpMethod, url){Content = new FormUrlEncodedContent(item)};
+        }
         private static string NormalizeOrigin(string origin)
         {
             return origin?.Trim()?.ToLower();
@@ -102,5 +113,7 @@ namespace Resilience
                 requestMessage.Headers.Add("Authorization", new List<string>() {authorizationHeader});
             }
         }
+
+      
     }
 }

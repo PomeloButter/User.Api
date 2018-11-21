@@ -14,11 +14,15 @@
     <PackageReference Include="IdentityServer4" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />
-    <PackageReference Include="Polly" Version="6.1.1" />
+    <PackageReference Include="Polly" Version="5.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Resilience\Resilience.csproj" />
   </ItemGroup>
 
 </Project>
