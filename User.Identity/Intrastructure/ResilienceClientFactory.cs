@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -11,8 +12,8 @@ namespace User.Identity.Intrastructure
     {
         private readonly ILogger<ResilienceHttpClient> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private int _retryCount;
-        private int _exceptionCountAllowedBeforeBreaking;
+        private readonly int _retryCount;
+        private readonly int _exceptionCountAllowedBeforeBreaking;
 
         public ResilienceClientFactory(IHttpContextAccessor httpContextAccessor, ILogger<ResilienceHttpClient> logger, int retryCount, int exceptionCountAllowedBeforeBreaking)
         {
@@ -27,11 +28,10 @@ namespace User.Identity.Intrastructure
 
         private Policy[] CreatePolicy(string origin)
         {
-
             return new Policy[]
             {
                 Policy.Handle<HttpRequestException>()
-                .WaitAndRetry(
+                .WaitAndRetryAsync(
                     _retryCount,
                     retryAttempt=>TimeSpan.FromSeconds(Math.Pow(2,retryAttempt)),
                         (exception, timeSpan, retryCount, context) =>

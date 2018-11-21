@@ -56,8 +56,12 @@ namespace User.Identity
                 return new ResilienceClientFactory(httpcontextAccesser,logger,retryCount,exceptionCountAllowedBeforeBreaking);
             });
 
-            services.AddSingleton<IHttpClient>( s =>s.GetRequiredService<ResilienceClientFactory>().GetResilienceHttpClient() );
-;
+            services.AddSingleton<IHttpClient>(sp =>
+            {
+                var resilienceClientFactory = sp.GetRequiredService<ResilienceClientFactory>();
+                return resilienceClientFactory.GetResilienceHttpClient();
+            });
+            ;
 
             services.AddScoped<IAuthCodeService,TestAuthCodeService>();
             services.AddScoped<IUserService, UserService>();

@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DnsClient;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resilience;
 using User.Identity.Dtos;
@@ -12,12 +14,14 @@ namespace User.Identity.Services
 {
     public class UserService : IUserService
     {
-        private  string _userServiceUrl;
-        private IHttpClient _httpClient;
+        private readonly string _userServiceUrl;
+        private readonly IHttpClient _httpClient;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IHttpClient httpClient,IDnsQuery dnsQuery,IOptions<ServiceDiscoveryOptions> options)
+        public UserService(IHttpClient httpClient,IDnsQuery dnsQuery,IOptions<ServiceDiscoveryOptions> options,ILogger<UserService> logger)
         {
             _httpClient = httpClient;
+            _logger = logger;
             var address=dnsQuery.ResolveService("service.consul",options.Value.UserServiceName);
             var addressList = address.First().AddressList;
             var host = address.First().AddressList.Any() ? addressList.First().ToString() : address.First().HostName;
@@ -27,14 +31,24 @@ namespace User.Identity.Services
 
         public async Task<int> CheckOrCreate(string phone)
         {
-            var form = new Dictionary<string, string>() {{"phone", phone}};       
-            var response = await _httpClient.PostAsync(_userServiceUrl + "api/users/check-or-create",form);
-            if (response.StatusCode==HttpStatusCode.OK)
+            var form = new Dictionary<string, string>() {{"phone", phone}};
+            try
             {
-                var userId = await response.Content.ReadAsStringAsync();
-                int.TryParse(userId, out int intUserId);
-                return intUserId;
+                var response = await _httpClient.PostAsync($"{_userServiceUrl}" + "api/users/check-or-create", form);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var userId = await response.Content.ReadAsStringAsync();
+                    int.TryParse(userId, out int intUserId);
+                    return intUserId;
+                }
             }
+            catch (Exception e)
+            {
+               _logger.LogError("checkOrCreate在重试之后失败"+e.Message+e.StackTrace);
+                throw e;
+            }
+         
+           
             return 0;
         }
     }
