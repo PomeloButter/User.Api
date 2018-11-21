@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Identity", "User.Ident
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway.API", "API.Gateway\Gateway.API.csproj", "{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{2A592BFB-2376-4F70-8529-488448CB0704}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resilience", "Resilience\Resilience.csproj", "{79F97163-DD6F-4C51-B8F6-280CC92FC1F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,12 +39,17 @@ Global
 		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DF5703D-CAE6-4993-A90B-6AC0C686CB5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79F97163-DD6F-4C51-B8F6-280CC92FC1F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79F97163-DD6F-4C51-B8F6-280CC92FC1F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79F97163-DD6F-4C51-B8F6-280CC92FC1F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79F97163-DD6F-4C51-B8F6-280CC92FC1F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8A4271CD-919F-49FD-9012-07282E640139} = {05C84C67-E564-4541-9A06-6460F1444064}
+		{79F97163-DD6F-4C51-B8F6-280CC92FC1F1} = {2A592BFB-2376-4F70-8529-488448CB0704}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21B8D1D9-2C12-4A37-A0EC-5CC917B8C544}
