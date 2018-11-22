@@ -10,7 +10,7 @@ namespace Contact.API.Models
         public string Company { get; set; }
         public string Title { get; set; }
         public string Avatar { get; set; }
-        public int  ApplyerId { get; set; }
+        public int  ApplierId { get; set; }
 
         /// <summary>
         ///     是否通过 0未通过 1通过

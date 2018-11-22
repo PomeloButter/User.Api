@@ -32,32 +32,28 @@ namespace Contact.API.Controllers
         public async Task<IActionResult> AddApplyRequest(int userId)
         {
             var baseUserInfo = await _userService.GetBaseUserInfoAsync(userId);
-            if (baseUserInfo == null)
-            {
-                throw new Exception("用户参数错误");
-
-            }
-            var result = await _contactApplyRequestRepository.AddRequestAsync(new ContactApplyRequest()
+            if (baseUserInfo == null) throw new Exception("用户参数错误");
+            var result = await _contactApplyRequestRepository.AddRequestAsync(new ContactApplyRequest
             {
                 UserId = userId,
-                ApplyerId = UserIdentity.UserId,
+                ApplierId = UserIdentity.UserId,
                 Name = baseUserInfo.Name,
                 Company = baseUserInfo.Company,
                 Title = baseUserInfo.Title,
                 CreateTime = DateTime.Now,
                 Avatar = baseUserInfo.Avatar
             });
-            if (!result)
-            {
-                return BadRequest();
-            }
+            if (!result) return BadRequest();
             return Ok();
         }
 
         [HttpPut]
         [Route("apply-requests")]
-        public async Task<IActionResult> ApprovalApplyRequest()
+        public async Task<IActionResult> ApprovalApplyRequest(int applierId)
         {
+            var result = await _contactApplyRequestRepository.ApprovalAsync(applierId);
+            if (!result) return BadRequest();
+            return Ok();
         }
     }
 }
