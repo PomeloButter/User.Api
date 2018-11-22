@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -79,5 +81,38 @@ namespace User.API.Controllers
             }
             return Ok(user.Id);
         }
+
+        [Route("tags")]
+        [HttpGet]
+        public async Task<IActionResult> GetUserTags()
+        {
+          return Ok(await _userContext.UserTags.Where(u => u.UserId == UserIdentity.UserId).ToListAsync());
+        }
+
+        [Route("search")]
+        [HttpPost]
+        public async Task<IActionResult> Search(string phone)
+        {
+            return Ok( await _userContext.AppUsers.Include(u => u.Properties)
+                .SingleOrDefaultAsync(u => u.Id == UserIdentity.UserId));
+        }
+
+        [Route("tags")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateUserTags([FromBody]List<string> tags)
+        {
+            var originTags = await _userContext.UserTags.Where(u => u.UserId == UserIdentity.UserId).ToListAsync();
+            var newTags = tags.Except(originTags.Select(t=>t.Tag));
+
+            await _userContext.UserTags.AddRangeAsync(newTags.Select(t => new UserTag()
+            {
+                CreateTime = DateTime.Now,
+                Tag = t,
+                UserId = UserIdentity.UserId
+            }));
+            await _userContext.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }

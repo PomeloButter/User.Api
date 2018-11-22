@@ -24,7 +24,7 @@ namespace User.Identity.Intrastructure
         }
 
         public ResilienceHttpClient GetResilienceHttpClient()=>
-            new ResilienceHttpClient(origin=>CreatePolicy(origin), _logger,_httpContextAccessor );
+            new ResilienceHttpClient(CreatePolicy, _logger,_httpContextAccessor );
 
         private Policy[] CreatePolicy(string origin)
         {

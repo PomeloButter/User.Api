@@ -20,14 +20,16 @@ namespace Resilience
         private readonly HttpClient _httpClient;
 
         //根据url origin 去创建policy
-        private  Func<string, Policy[]> _policyCreator;
+        private readonly Func<string, Policy[]> _policyCreator;
 
         //吧policy 打包成组合policy wraper 进行本地缓存
-        private  ConcurrentDictionary<string, PolicyWrap> _policyWraps;
+        private readonly ConcurrentDictionary<string, PolicyWrap> _policyWraps;
         private ILogger<ResilienceHttpClient> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public ResilienceHttpClient(Func<string, Policy[]> policyCreator, ILogger<ResilienceHttpClient> logger, IHttpContextAccessor httpContextAccessor)
+        public ResilienceHttpClient(Func<string, Policy[]> policyCreator, 
+            ILogger<ResilienceHttpClient> logger, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = new HttpClient();
             _policyWraps = new ConcurrentDictionary<string, PolicyWrap>();
