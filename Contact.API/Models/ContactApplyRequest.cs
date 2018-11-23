@@ -19,6 +19,6 @@ namespace Contact.API.Models
 
         public DateTime HandledTime { get; set; }
 
-        public DateTime CreateTime { get; set; }
+        public DateTime ApplyTime { get; set; }
     }
 }
