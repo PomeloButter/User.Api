@@ -79,7 +79,14 @@ namespace User.API.Controllers
                 _userContext.AppUsers.Add(user);
                 await _userContext.SaveChangesAsync();
             }
-            return Ok(user.Id);
+            return Ok(new
+            {
+                user.Id,
+                user.Name,
+                user.Company,
+                user.Title,
+                user.Avatar
+            });
         }
 
         [Route("tags")]

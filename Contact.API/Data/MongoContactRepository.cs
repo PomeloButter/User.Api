@@ -63,7 +63,7 @@ namespace Contact.API.Data
 
         public async Task<List<Models.Contact>> GetContactAsync(int userId, CancellationToken cancellationToken)
         {
-            var contactBook = (await _context.ContactBooks.FindAsync(c => c.UserId == userId)).FirstOrDefault();
+            var contactBook = (await _context.ContactBooks.FindAsync(c => c.UserId == userId, cancellationToken: cancellationToken)).FirstOrDefault();
             if (contactBook != null) return contactBook.Contacts;
             return new List<Models.Contact>();
         }

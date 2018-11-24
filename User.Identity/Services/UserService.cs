@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DnsClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Resilience;
 using User.Identity.Dtos;
 
@@ -29,7 +30,7 @@ namespace User.Identity.Services
             _userServiceUrl = $"http://{host}:{port}/";
         }
 
-        public async Task<int> CheckOrCreate(string phone)
+        public async Task<Dtos.UserInfo> CheckOrCreate(string phone)
         {
             var form = new Dictionary<string, string>() {{"phone", phone}};
             try
@@ -37,9 +38,10 @@ namespace User.Identity.Services
                 var response = await _httpClient.PostAsync($"{_userServiceUrl}" + "api/users/check-or-create", form);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    var userId = await response.Content.ReadAsStringAsync();
-                    int.TryParse(userId, out int intUserId);
-                    return intUserId;
+                    var result = await response.Content.ReadAsStringAsync();
+                    var userInfo = JsonConvert.DeserializeObject<UserInfo>(result);
+//                    _logger.LogError($"completed Checkorcreate with userid:{userInfo.Id}");
+                    return userInfo;
                 }
             }
             catch (Exception e)
@@ -49,7 +51,7 @@ namespace User.Identity.Services
             }
          
            
-            return 0;
+            return null;
         }
     }
 }
