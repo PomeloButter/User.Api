@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Contact.API.Data;
 using Contact.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +36,14 @@ namespace Contact.API
             services.AddScoped<IContactApplyRequestRepository, MongoContactApplyRequestRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddSingleton(typeof(ContactContext));
-
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(option =>
+                {
+                    option.RequireHttpsMetadata=false;
+                    option.Audience = "contact_api";
+                    option.Authority = "http://localhost:8080";
+                });
             services.AddMvc();
         }
 
@@ -45,7 +54,7 @@ namespace Contact.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

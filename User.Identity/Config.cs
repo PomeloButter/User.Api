@@ -12,7 +12,8 @@ namespace User.Identity
         {
             return new List<ApiResource>()
             {
-                new ApiResource("gateway_api","user api service")
+                new ApiResource("gateway_api","user api service"),
+                new ApiResource("contact_api","contact api service")
             };
         }
         public static IEnumerable<Client> GetClients()
@@ -30,6 +31,7 @@ namespace User.Identity
                     AllowedScopes = new[]
                     {
                         "gateway_api",
+                        "contact_api",
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.OfflineAccess,

@@ -5,6 +5,7 @@ using Contact.API.Data;
 using Contact.API.Models;
 using Contact.API.Services;
 using Contact.API.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Contact.API.Controllers
@@ -37,17 +38,15 @@ namespace Contact.API.Controllers
         [Route("apply-requests")]
         public async Task<IActionResult> AddApplyRequest(int userId, CancellationToken cancellationToken)
         {
-            var baseUserInfo = await _userService.GetBaseUserInfoAsync(userId);
-            if (baseUserInfo == null) throw new Exception("用户参数错误");
             var result = await _contactApplyRequestRepository.AddRequestAsync(new ContactApplyRequest
             {
                 UserId = userId,
                 ApplierId = UserIdentity.UserId,
-                Name = baseUserInfo.Name,
-                Company = baseUserInfo.Company,
-                Title = baseUserInfo.Title,
+                Name = UserIdentity.Name,
+                Company = UserIdentity.Company,
+                Title = UserIdentity.Title,
                 ApplyTime = DateTime.Now,
-                Avatar = baseUserInfo.Avatar
+                Avatar = UserIdentity.Avatar
             }, cancellationToken);
             if (!result) return BadRequest();
             return Ok();
@@ -62,11 +61,12 @@ namespace Contact.API.Controllers
             if (!result) return BadRequest();
             var userBaseInfo = await _userService.GetBaseUserInfoAsync(applierId);
             var userInfo = await _userService.GetBaseUserInfoAsync(UserIdentity.UserId);
-            await _contactRepository.AddContactAsync(UserIdentity.UserId, userInfo, cancellationToken);
-            await _contactRepository.AddContactAsync(applierId, userBaseInfo, cancellationToken);
+
+            await _contactRepository.AddContactAsync(UserIdentity.UserId, userBaseInfo, cancellationToken);
+            await _contactRepository.AddContactAsync(applierId, userInfo, cancellationToken);
             return Ok();
         }
-
+        [Authorize]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)

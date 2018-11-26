@@ -17,7 +17,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/connect/token",
+      "DownstreamPathTemplate": "/connect/{catchAll}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -25,7 +25,7 @@
           "Port": 5000
         }
       ],
-      "UpstreamPathTemplate": "/connect/token",
+      "UpstreamPathTemplate": "/connect/{catchAll}",
       "UpstreamHttpMethod": [ "Post" ]
     },
     {
@@ -62,7 +62,19 @@
         }
       ],
       "UpstreamPathTemplate": "/contacts/apply-requests",
-      "UpstreamHttpMethod": [ "Get","Put","Post" ]
+      "UpstreamHttpMethod": [ "Get", "Put", "Post" ]
+    },
+    {
+      "DownstreamPathTemplate": "/.well-known/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ],
+      "UpstreamPathTemplate": "/.well-known/{catchAll}",
+      "UpstreamHttpMethod": [ "Get" ]
     }
   ],
   "GloalConfiguration": {
