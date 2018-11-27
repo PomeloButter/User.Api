@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Contact.API.Models
 {
+    [BsonIgnoreExtraElements]
     public class ContactBook
     {
         public ContactBook()

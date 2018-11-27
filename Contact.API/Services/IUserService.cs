@@ -5,6 +5,6 @@ namespace Contact.API.Services
 {
     public interface IUserService
     {
-        Task<BaseUserInfo> GetBaseUserInfoAsync(int userId);
+        Task<UserIdentity> GetBaseUserInfoAsync(int userId);
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Contact.API.Models
 {
+    [BsonIgnoreExtraElements]
     public class ContactApplyRequest
     {
         public int Id { get; set; }

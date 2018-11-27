@@ -31,17 +31,17 @@ namespace Contact.API.Controllers
         {
             var request =
                 await _contactApplyRequestRepository.GetRequestListAsync(UserIdentity.UserId, cancellationToken);
-            return Ok();
+            return Ok(request);
         }
 
-        [HttpGet]
-        [Route("apply-requests")]
+        [HttpPost]
+        [Route("add-requests")]
         public async Task<IActionResult> AddApplyRequest(int userId, CancellationToken cancellationToken)
         {
             var result = await _contactApplyRequestRepository.AddRequestAsync(new ContactApplyRequest
             {
-                UserId = userId,
-                ApplierId = UserIdentity.UserId,
+                UserId = UserIdentity.UserId,
+                ApplierId = userId,
                 Name = UserIdentity.Name,
                 Company = UserIdentity.Company,
                 Title = UserIdentity.Title,
@@ -53,7 +53,7 @@ namespace Contact.API.Controllers
         }
 
         [HttpPut]
-        [Route("apply-requests")]
+        [Route("ApprovalApply-requests")]
         public async Task<IActionResult> ApprovalApplyRequest(int applierId, CancellationToken cancellationToken)
         {
             var result =
@@ -66,6 +66,7 @@ namespace Contact.API.Controllers
             await _contactRepository.AddContactAsync(applierId, userInfo, cancellationToken);
             return Ok();
         }
+
         [Authorize]
         [HttpGet]
         [Route("")]

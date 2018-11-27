@@ -62,7 +62,7 @@ namespace User.Identity
                 var resilienceClientFactory = sp.GetRequiredService<ResilienceClientFactory>();
                 return resilienceClientFactory.GetResilienceHttpClient();
             });
-            ;
+            
             services.AddTransient<IProfileService, ProfileService>();
             services.AddScoped<IAuthCodeService,TestAuthCodeService>();
             services.AddScoped<IUserService, UserService>();

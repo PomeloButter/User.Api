@@ -13,9 +13,9 @@ namespace Contact.API.Data
         /// <param name="userInfo"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<bool> UpdateContactInfoAsync(BaseUserInfo userInfo, CancellationToken cancellationToken);
+        Task<bool> UpdateContactInfoAsync(UserIdentity userInfo, CancellationToken cancellationToken);
 
-        Task<bool> AddContactAsync(int contactId,BaseUserInfo baseUserInfo, CancellationToken cancellationToken);
+        Task<bool> AddContactAsync(int contactId, UserIdentity baseUserInfo, CancellationToken cancellationToken);
         Task<List<Models.Contact>> GetContactAsync(int userId, CancellationToken cancellationToken);
         Task<bool> GetTagContactAsync(int userId, int contactId, List<string> tags, CancellationToken cancellationToken);
 

@@ -68,6 +68,27 @@ namespace User.API.Controllers
             return Json(user);
         }
 
+        [HttpGet]
+        [Route("baseinfo/{userId}")]
+        public async Task<IActionResult> GetBaseInfo(int userId)
+        {
+            var user = await _userContext.AppUsers.SingleOrDefaultAsync(u => u.Id == userId);
+            if (user==null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new
+            {
+               userId= user.Id,
+                user.Name,
+                user.Company,
+                user.Title,
+                user.Avatar
+
+            });
+        }
+
         [Route("check-or-create")]
         [HttpPost]
         public async Task<IActionResult> CheckOrCreate(string phone)

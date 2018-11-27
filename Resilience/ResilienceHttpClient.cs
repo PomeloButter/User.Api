@@ -49,6 +49,40 @@ namespace Resilience
             return  DoPostAsync(HttpMethod.Post, Func, url, authorizationToken, requestId, authorizationMethod);
         }
 
+        public Task<string> GetStringAsync(string url, string authorizationToken = null, string authorizationMethod = "Bearer")
+        {
+            var origin = GetOriginFromUri(url);
+            return HttpInvoker(origin, async() =>
+            {
+                var requestMessage=new HttpRequestMessage(HttpMethod.Get, url);
+                SetAuthorizationHeader(requestMessage);
+                if (authorizationToken!=null)
+                {
+                    requestMessage.Headers.Authorization=new AuthenticationHeaderValue(authorizationMethod,authorizationToken);
+                }
+
+                var response = await _httpClient.SendAsync(requestMessage);
+                if (response.StatusCode==HttpStatusCode.InternalServerError)
+                {
+                    throw new HttpRequestException();
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                return await response.Content.ReadAsStringAsync();
+            });
+        }
+
+        public Task<HttpResponseMessage> PutAsync<T>(string url, T item, string authorizationToken = null, string requestId = null,
+            string authorizationMethod = "Bearer")
+        {
+            HttpRequestMessage Func() => CreateHttpRequestMessage(HttpMethod.Put, url, item);
+            return DoPostAsync(HttpMethod.Put, Func, url, authorizationToken, requestId, authorizationMethod);
+        }
+
         private  Task<HttpResponseMessage> DoPostAsync(HttpMethod method, Func<HttpRequestMessage> requestMessageFunc, string url, string authorizationToken, string requestId = null, string authorizationMethod = "Bearer")
         {
             if (method != HttpMethod.Post && method != HttpMethod.Put)

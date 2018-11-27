@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using Consul;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -42,7 +44,14 @@ namespace User.API
                     cfg.Address = new Uri(serviceConfiguration.Consul.HttpEndpoint);
                 }
             }));
-
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(option =>
+                {
+                    option.RequireHttpsMetadata = false;
+                    option.Audience = "user_api";
+                    option.Authority = "http://localhost:8080";
+                });
             services.AddMvc(option => { option.Filters.Add(typeof(GlobalExceptionFilter)); });
         }
 
@@ -56,7 +65,7 @@ namespace User.API
             //启动时注册服务
             applicationLifetime.ApplicationStarted.Register(() => { RegisterService(app, serviceOptions, consul); });
             applicationLifetime.ApplicationStopped.Register(() => { DeRegisterService(app, serviceOptions, consul); });
-
+            app.UseAuthentication();
             app.UseMvc();
         }
 
