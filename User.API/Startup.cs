@@ -52,7 +52,26 @@ namespace User.API
                     option.Audience = "user_api";
                     option.Authority = "http://localhost:8080";
                 });
-            services.AddMvc(option => { option.Filters.Add(typeof(GlobalExceptionFilter)); });
+            services.AddMvc(option =>
+            {
+                option.Filters.Add(typeof(GlobalExceptionFilter));
+            });
+
+            services.AddCap(option =>
+            {
+                option.UseEntityFramework<UserContext>()
+                .UseRabbitMQ("localhost")
+                .UseDashboard();
+                option.UseDiscovery(d =>
+                {
+                    d.DiscoveryServerHostName = "localhost";
+                    d.DiscoveryServerPort = 8500;
+                    d.CurrentNodeHostName = "localhost";
+                    d.CurrentNodePort = 5800;
+                    d.NodeId = 1;
+                    d.NodeName = "CAP NO.1 Node";
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +84,7 @@ namespace User.API
             //启动时注册服务
             applicationLifetime.ApplicationStarted.Register(() => { RegisterService(app, serviceOptions, consul); });
             applicationLifetime.ApplicationStopped.Register(() => { DeRegisterService(app, serviceOptions, consul); });
+            app.UseCap();
             app.UseAuthentication();
             app.UseMvc();
         }

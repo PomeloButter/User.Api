@@ -10,10 +10,26 @@
         }
       ],
       "UpstreamPathTemplate": "/users",
-      "UpstreamHttpMethod": ["Get", "Patch"],
+      "UpstreamHttpMethod": [ "Get" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "finbook",
-        "AllowedScopes": ["user_api"]
+        "AllowedScopes": [ "user_api" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/users",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ],
+      "UpstreamPathTemplate": "/users",
+      "UpstreamHttpMethod": ["Patch" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "finbook",
+        "AllowedScopes": [ "user_api" ]
       }
     },
     {
@@ -26,10 +42,10 @@
         }
       ],
       "UpstreamPathTemplate": "/users/baseinfo/{userId}",
-      "UpstreamHttpMethod": ["Get"],
+      "UpstreamHttpMethod": [ "Get" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "finbook",
-        "AllowedScopes": ["user_api"]
+        "AllowedScopes": [ "user_api" ]
       }
     },
     {
@@ -42,7 +58,7 @@
         }
       ],
       "UpstreamPathTemplate": "/connect/{catchAll}",
-      "UpstreamHttpMethod": ["Post"]
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "DownstreamPathTemplate": "/api/contacts",
@@ -54,7 +70,7 @@
         }
       ],
       "UpstreamPathTemplate": "/contacts",
-      "UpstreamHttpMethod": ["Get"]
+      "UpstreamHttpMethod": [ "Get" ]
     },
     {
       "DownstreamPathTemplate": "/api/contacts",
@@ -66,7 +82,7 @@
         }
       ],
       "UpstreamPathTemplate": "/contacts/tags",
-      "UpstreamHttpMethod": ["Put"]
+      "UpstreamHttpMethod": [ "Put" ]
     },
     {
       "DownstreamPathTemplate": "/api/contacts/ApprovalApply-requests",
@@ -126,7 +142,7 @@
         }
       ],
       "UpstreamPathTemplate": "/.well-known/{catchAll}",
-      "UpstreamHttpMethod": ["Get"]
+      "UpstreamHttpMethod": [ "Get" ]
     }
   ],
   "GloalConfiguration": {

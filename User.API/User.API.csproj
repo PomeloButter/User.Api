@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="0.7.2.6" />
+    <PackageReference Include="DotNetCore.CAP" Version="2.2.2" />
+    <PackageReference Include="DotNetCore.CAP.MySql" Version="2.2.2" />
+    <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />

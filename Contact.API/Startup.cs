@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contact.API.Data;
 using Contact.API.Dots;
+using Contact.API.IntegrationEvents.EventHandling;
 using Contact.API.Intrastructure;
 using Contact.API.Services;
 using DnsClient;
@@ -62,6 +63,7 @@ namespace Contact.API
             services.AddScoped<IContactRepository, MongoContactRepository>();
             services.AddScoped<IContactApplyRequestRepository, MongoContactApplyRequestRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<UserPrfileChangedHandler>();
             services.AddSingleton(typeof(ContactContext));
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -74,6 +76,22 @@ namespace Contact.API
                 });
            
             services.AddMvc();
+
+            services.AddCap(option =>
+            {
+                option.UseMySql(Configuration.GetConnectionString("mysql"));
+                option.UseRabbitMQ("localhost");
+                option.UseDashboard();
+                option.UseDiscovery(d =>
+                {
+                    d.DiscoveryServerHostName = "localhost";
+                    d.DiscoveryServerPort = 8500;
+                    d.CurrentNodeHostName = "localhost";
+                    d.CurrentNodePort = 5801;
+                    d.NodeId = 2;
+                    d.NodeName = "CAP NO.2 Node";
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +102,7 @@ namespace Contact.API
                 app.UseDeveloperExceptionPage();
             }
             app.UseAuthentication();
+            app.UseCap();
             app.UseMvc();
         }
     }

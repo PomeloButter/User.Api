@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetCore.CAP;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using User.API.Data;
+using User.API.Dots;
 using User.API.Models;
 
 namespace User.API.Controllers
@@ -15,12 +17,32 @@ namespace User.API.Controllers
     public class UserController : BaseController
     {
         private readonly ILogger<UserController> _logger;
+        private readonly ICapPublisher _capPublisher;
         private readonly UserContext _userContext;
 
-        public UserController(UserContext userContext, ILogger<UserController> logger)
+        public UserController(UserContext userContext, ILogger<UserController> logger,ICapPublisher capPublisher)
         {
             _userContext = userContext;
             _logger = logger;
+            _capPublisher = capPublisher;
+        }
+
+        private async void RaiseUserProfileChangeEvent(AppUser user)
+        {
+            if (_userContext.Entry(user).Property(nameof(user.Name)).IsModified||
+                _userContext.Entry(user).Property(nameof(user.Title)).IsModified||
+                _userContext.Entry(user).Property(nameof(user.Company)).IsModified||
+                _userContext.Entry(user).Property(nameof(user.Avatar)).IsModified)
+            {
+              await  _capPublisher.PublishAsync("finbook.userapi.userprofilechanged",new UserIdentity
+                {
+                    UserId = user.Id,
+                    Name = user.Name,
+                    Company = user.Company,
+                    Title = user.Title,
+                    Avatar = user.Avatar
+                });
+            }
         }
 
         // GET api/values
@@ -63,8 +85,13 @@ namespace User.API.Controllers
                 _userContext.Add(property);
             }
 
-            _userContext.Update(user);
-            _userContext.SaveChanges();
+            using (var transaction=_userContext.Database.BeginTransaction())
+            {
+                RaiseUserProfileChangeEvent(user);
+                _userContext.Update(user);               
+                _userContext.SaveChanges();               
+                transaction.Commit();
+            }          
             return Json(user);
         }
 
