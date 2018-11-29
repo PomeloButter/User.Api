@@ -6,13 +6,13 @@ using Project.Domain.SeedWork;
 
 namespace Project.Domain.AggregatesModel
 {
-    public class Project : Entity,IAggregateRoot
+    public class Project : Entity, IAggregateRoot
     {
         public Project()
         {
-            this.ProjectViewers=new List<ProjectViewer>();
-            this.ProjectContributors=new List<ProjectContributor>();
-            this.AddDomainEvent(new ProjectCreatedEvent{Project = this});
+            ProjectViewers = new List<ProjectViewer>();
+            ProjectContributors = new List<ProjectContributor>();
+            AddDomainEvent(new ProjectCreatedEvent {Project = this});
         }
 
         public int UserId { get; set; }
@@ -29,64 +29,79 @@ namespace Project.Domain.AggregatesModel
         public string AreaName { get; set; }
         public DateTime RegisterDateTime { get; set; }
         public string Introduction { get; set; }
+
         /// <summary>
-        /// 出让股份比例
+        ///     出让股份比例
         /// </summary>
         public string FinPercentag { get; set; }
+
         /// <summary>
-        /// 融资阶段
+        ///     融资阶段
         /// </summary>
         public string FinStage { get; set; }
+
         /// <summary>
-        /// 融资金额(w)
+        ///     融资金额(w)
         /// </summary>
         public int FinMoney { get; set; }
+
         /// <summary>
-        /// 收入(w)
+        ///     收入(w)
         /// </summary>
         public int Income { get; set; }
+
         /// <summary>
-        /// 利润(w)
+        ///     利润(w)
         /// </summary>
         public int Revenue { get; set; }
+
         /// <summary>
-        /// 估值(w)
+        ///     估值(w)
         /// </summary>
         public int Valuation { get; set; }
+
         /// <summary>
-        /// 佣金分配方式
+        ///     佣金分配方式
         /// </summary>
         public int BrokerageOptions { get; set; }
+
         /// <summary>
-        /// 是否委托平台
+        ///     是否委托平台
         /// </summary>
         public bool OnPlatform { get; set; }
+
         /// <summary>
-        /// 可见范围
+        ///     可见范围
         /// </summary>
         public ProjectVisableRule ProjectVisableRule { get; set; }
+
         /// <summary>
-        /// 根引用项目Id
+        ///     根引用项目Id
         /// </summary>
         public int SourceId { get; set; }
+
         /// <summary>
-        /// 上级引用项目Id
+        ///     上级引用项目Id
         /// </summary>
         public int RefenceId { get; set; }
+
         /// <summary>
-        /// 项目标签
+        ///     项目标签
         /// </summary>
         public string Tags { get; set; }
+
         /// <summary>
-        /// 项目属性集合
+        ///     项目属性集合
         /// </summary>
         public List<ProjectPropetry> ProjectPropetries { get; set; }
+
         /// <summary>
-        /// 项目贡献者集合
+        ///     项目贡献者集合
         /// </summary>
         public List<ProjectContributor> ProjectContributors { get; set; }
+
         /// <summary>
-        /// 项目查看着集合
+        ///     项目查看着集合
         /// </summary>
         public List<ProjectViewer> ProjectViewers { get; set; }
 
@@ -95,11 +110,8 @@ namespace Project.Domain.AggregatesModel
 
         private Project ProjectClone(Project source)
         {
-            if (source == null)
-            {
-                source = this;
-            }
-            Project project = new Project()
+            if (source == null) source = this;
+            var project = new Project
             {
                 AreaId = source.AreaId,
                 AreaName = source.AreaName,
@@ -134,40 +146,35 @@ namespace Project.Domain.AggregatesModel
                 Valuation = source.Valuation
             };
             if (source.ProjectContributors != null && source.ProjectContributors.Any())
-            {
                 project.ProjectContributors.AddRange(source.ProjectContributors);
-            }
             if (source.ProjectPropetries != null && source.ProjectPropetries.Any())
-            {
                 project.ProjectPropetries.AddRange(source.ProjectPropetries);
-            }
             if (source.ProjectViewers != null && source.ProjectViewers.Any())
-            {
                 project.ProjectViewers.AddRange(source.ProjectViewers);
-            }
             return project;
         }
 
         public void AddViewer(int userId, string userName, string avatar)
         {
-            var viewer=new ProjectViewer()
+            var viewer = new ProjectViewer
             {
                 UserId = userId,
                 UserName = userName,
                 Avator = avatar,
                 CreateTime = DateTime.Now
-            };           
+            };
             if (ProjectViewers.All(c => c.UserId != userId))
             {
                 ProjectViewers.Add(viewer);
-                AddDomainEvent(new ProjectViewedEvent{ProjectViewer = viewer});
+                AddDomainEvent(new ProjectViewedEvent {ProjectViewer = viewer});
             }
         }
+
         public void AddContributor(ProjectContributor contributor)
         {
             if (ProjectContributors.Any(x => x.UserId == contributor.UserId)) return;
-            ProjectContributors.Add(contributor);   
-                        AddDomainEvent(new ProjectJoinedEvent{ProjectContributor = contributor});
+            ProjectContributors.Add(contributor);
+            AddDomainEvent(new ProjectJoinedEvent {ProjectContributor = contributor});
         }
     }
 }
