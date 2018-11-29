@@ -1,7 +1,10 @@
-﻿namespace Project.Domain.Events
+﻿using MediatR;
+using Project.Domain.AggregatesModel;
+
+namespace Project.Domain.Events
 {
-    public class ProjectViewedEvent
+    public class ProjectViewedEvent : INotification
     {
-        
+        public ProjectViewer ProjectViewer { get; set; }
     }
 }

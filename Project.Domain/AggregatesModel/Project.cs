@@ -8,11 +8,18 @@ namespace Project.Domain.AggregatesModel
 {
     public class Project : Entity,IAggregateRoot
     {
+        public Project()
+        {
+            this.ProjectViewers=new List<ProjectViewer>();
+            this.ProjectContributors=new List<ProjectContributor>();
+            this.AddDomainEvent(new ProjectCreatedEvent{Project = this});
+        }
+
         public int UserId { get; set; }
         public string Avator { get; set; }
         public string Company { get; set; }
-        public string OriginBPFile { get; set; }
-        public string ForamteBPFile { get; set; }
+        public string OriginBpFile { get; set; }
+        public string ForamteBpFile { get; set; }
         public bool ShowSecurityInfo { get; set; }
         public int ProvinceId { get; set; }
         public string ProvinceName { get; set; }
@@ -106,8 +113,8 @@ namespace Project.Domain.AggregatesModel
                 FinMoney = source.FinMoney,
                 FinPercentag = source.FinPercentag,
                 FinStage = source.FinStage,
-                ForamteBPFile = source.ForamteBPFile,
-                OriginBPFile = source.OriginBPFile,
+                ForamteBpFile = source.ForamteBpFile,
+                OriginBpFile = source.OriginBpFile,
                 Income = source.Income,
                 Introduction = source.Introduction,
                 OnPlatform = source.OnPlatform,
@@ -153,12 +160,14 @@ namespace Project.Domain.AggregatesModel
             if (ProjectViewers.All(c => c.UserId != userId))
             {
                 ProjectViewers.Add(viewer);
+                AddDomainEvent(new ProjectViewedEvent{ProjectViewer = viewer});
             }
         }
         public void AddContributor(ProjectContributor contributor)
         {
             if (ProjectContributors.Any(x => x.UserId == contributor.UserId)) return;
-            ProjectContributors.Add(contributor);           
+            ProjectContributors.Add(contributor);   
+                        AddDomainEvent(new ProjectJoinedEvent{ProjectContributor = contributor});
         }
     }
 }
