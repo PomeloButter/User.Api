@@ -22,8 +22,8 @@ namespace Project.Domain.SeedWork
         {
             if (obj == null || obj.GetType() != GetType()) return false;
             var other = (ValueObject) obj;
-            IEnumerator<object> thisValues = GetAtomicValues().GetEnumerator();
-            IEnumerator<object> otherValues = other.GetAtomicValues().GetEnumerator();
+            var thisValues = GetAtomicValues().GetEnumerator();
+            var otherValues = other.GetAtomicValues().GetEnumerator();
             while (thisValues.MoveNext() && otherValues.MoveNext())
             {
                 if (ReferenceEquals(thisValues.Current, null) ^ ReferenceEquals(otherValues.Current, null))
