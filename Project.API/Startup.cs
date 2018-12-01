@@ -69,7 +69,21 @@ namespace Project.API
                     option.Audience = "project_api";
                     option.Authority = "http://localhost:8080";
                 });
-
+            services.AddCap(option =>
+            {
+                option.UseEntityFramework<ProjectContext>();
+                option.UseRabbitMQ("localhost");
+                option.UseDashboard();
+                option.UseDiscovery(d =>
+                {
+                    d.DiscoveryServerHostName = "localhost";
+                    d.DiscoveryServerPort = 8500;
+                    d.CurrentNodeHostName = "localhost";
+                    d.CurrentNodePort = 5801;
+                    d.NodeId = 2;
+                    d.NodeName = "CAP NO.2 Node";
+                });
+            });
             services.AddMvc();
         }
 
@@ -83,6 +97,7 @@ namespace Project.API
             applicationLifetime.ApplicationStarted.Register(() => { RegisterService(app, serviceOptions, consul); });
             applicationLifetime.ApplicationStopped.Register(() => { DeRegisterService(app, serviceOptions, consul); });
             app.UseAuthentication();
+            app.UseCap();
             app.UseMvc();
         }
         private void RegisterService(IApplicationBuilder app, IOptions<ServiceDiscoveryOptions> serviceOptions, IConsulClient consul)
