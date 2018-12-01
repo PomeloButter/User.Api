@@ -23,7 +23,7 @@ namespace Project.API.Applications.Commands
                 throw new ProjectDomainException();
             }
             project.AddContributor(request.ProjectContributor);
-            await _projectRepository.UnitOfWork.SaveChangesAsync();
+            await _projectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 }
