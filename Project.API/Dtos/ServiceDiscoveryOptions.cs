@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Contact.API.Dots
+namespace Project.API.Dtos
 {
     public class ServiceDiscoveryOptions
     {

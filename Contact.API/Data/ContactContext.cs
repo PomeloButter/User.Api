@@ -10,18 +10,13 @@ namespace Contact.API.Data
 {
     public class ContactContext
     {
-        private IMongoDatabase _database;
-        private readonly IMongoCollection<ContactBook> _collection;
-        private readonly AppSettings _appSettings;
+        private readonly IMongoDatabase _database;
 
         public ContactContext(IOptionsSnapshot<AppSettings> setting)
         {
-            _appSettings = setting.Value;
-            var client=new MongoClient(_appSettings.MongoConnectionString);
-            if (client!=null)
-            {
-                _database = client.GetDatabase(_appSettings.MongoContactDatabase);
-            }
+            var appSettings = setting.Value;
+            var client=new MongoClient(appSettings.MongoConnectionString);
+            _database = client.GetDatabase(appSettings.MongoContactDatabase);
         }
 
         private void CheckAndCreateCollection(string name)

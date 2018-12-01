@@ -22,6 +22,10 @@ namespace Project.API.Applications.Commands
             {
                 throw new ProjectDomainException();
             }
+            if (project.UserId == request.UserId)
+            {
+                throw new ProjectDomainException($"不能自己加入自己的项目");
+            }
             project.AddViewer(request.UserId,request.UserName,request.Avatar);
             await _projectRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
