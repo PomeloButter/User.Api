@@ -29,7 +29,10 @@ namespace User.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<UserContext>(option => { option.UseMySQL(Configuration.GetConnectionString("mysql")); });
+            services.AddDbContext<UserContext>(option =>
+            {
+                option.UseMySQL(Configuration.GetConnectionString("mysql"));
+            });
 
             //拿consul配置
             services.Configure<ServiceDisvoveryOptions>(Configuration.GetSection("ServiceDiscovery"));

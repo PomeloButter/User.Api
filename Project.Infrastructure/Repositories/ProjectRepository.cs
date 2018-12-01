@@ -1,25 +1,47 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Project.Domain.AggregatesModel;
 using Project.Domain.SeedWork;
-using ProjectEntity=Project.Domain.AggregatesModel.Project;
+using ProjectEntity = Project.Domain.AggregatesModel.Project;
+
 namespace Project.Infrastructure.Repositories
 {
-    public class ProjectRepository:IProjectRepository
+    public class ProjectRepository : IProjectRepository
     {
-        public IUnitOfWork UnitOfWork { get; }
-        public Task<ProjectEntity> AddAsync(ProjectEntity project)
+        private readonly ProjectContext _context;
+
+        public ProjectRepository(ProjectContext context)
         {
-            throw new System.NotImplementedException();
+            _context = context;
         }
 
-        public Task<ProjectEntity> UpdateAsync(ProjectEntity project)
+        public IUnitOfWork UnitOfWork => _context;
+
+
+        public ProjectEntity Add(ProjectEntity project)
         {
-            throw new System.NotImplementedException();
+            if (project.IsTransient())
+            {
+              return  _context.Add(project).Entity;
+            }
+
+            return project;
         }
 
-        public Task<ProjectEntity> GetAsync(int id)
+        public void Update(ProjectEntity project)
         {
-            throw new System.NotImplementedException();
+            _context.Update(project);
+        }
+
+        public async Task<ProjectEntity> GetAsync(int id)
+        {
+            return await _context.Projects
+                .Include(p => p.ProjectPropetries)
+                .Include(p => p.ProjectViewers)
+                .Include(p => p.ProjectContributors)
+                .Include(p => p.ProjectVisableRule)
+                .SingleOrDefaultAsync(p => p.Id == id);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Project.API.Applications.Commands
                 throw new ProjectDomainException();
             }
             project.AddViewer(request.UserId,request.UserName,request.Avatar);
-            await _projectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            await _projectRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
         }
     }
 }

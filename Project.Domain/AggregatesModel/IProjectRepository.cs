@@ -5,8 +5,8 @@ namespace Project.Domain.AggregatesModel
 {
     public interface IProjectRepository: IRepository<Project>
     {
-        Task<Project> AddAsync(Project project);
-        Task<Project> UpdateAsync(Project project);
+        Project Add(Project project);
+        void Update(Project project);
         Task<Project> GetAsync(int id);
     }
 }
