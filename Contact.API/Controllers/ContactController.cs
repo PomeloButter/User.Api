@@ -67,14 +67,18 @@ namespace Contact.API.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
         {
             return Ok(await _contactRepository.GetContactAsync(UserIdentity.UserId, cancellationToken));
         }
-
+        [HttpGet]
+        [Route("{userId}")]
+        public async Task<IActionResult> Get(int userId,CancellationToken cancellationToken)
+        {
+            return Ok(await _contactRepository.GetContactAsync(userId, cancellationToken));
+        }
         [HttpGet]
         [Route("tag")]
         public async Task<IActionResult> TagContact([FromBody] TagContactInputViewModel model,

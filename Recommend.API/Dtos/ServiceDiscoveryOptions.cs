@@ -1,11 +1,12 @@
 ﻿using System.Net;
 
-namespace Contact.API.Dots
+namespace Recommend.API.Dtos
 {
     public class ServiceDiscoveryOptions
     {
         public string UserServiceName { get; set; }
         public string ContactServiceName { get; set; }
+        public string RecommendServiceName { get; set; }
         public ConsulOptions Consul { get; set; }
     }
 

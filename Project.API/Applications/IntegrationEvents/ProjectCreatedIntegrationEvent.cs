@@ -1,13 +1,16 @@
 ﻿using System;
 
-namespace Project.API.Applications.DomainEventHandlers
+namespace Project.API.Applications.IntegrationEvents
 {
     public class ProjectCreatedIntegrationEvent
     {
-
-        public int Projectid { get; set; }
+        public int ProjectId { get; set; }
         public int UserId { get; set; }
+        public string ProjectAvatar { get; set; }
+        public string Company { get; set; }
+        public string Introduction { get; set; }
+        public string Tags { get; set; }
+        public string Finstage { get; set; }
         public DateTime CreateTime { get; set; }
-
     }
 }

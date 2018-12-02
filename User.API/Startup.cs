@@ -70,9 +70,9 @@ namespace User.API
                     d.DiscoveryServerHostName = "localhost";
                     d.DiscoveryServerPort = 8500;
                     d.CurrentNodeHostName = "localhost";
-                    d.CurrentNodePort = 5800;
+                    d.CurrentNodePort = 5001;
                     d.NodeId = 1;
-                    d.NodeName = "CAP NO.1 Node";
+                    d.NodeName = "CAP User Node";
                 });
             });
         }

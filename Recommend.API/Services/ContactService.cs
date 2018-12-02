@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using Contact.API.Dots;
 using DnsClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Recommend.API.Dtos;
 using Resilience;
 
-namespace Contact.API.Services
+namespace Recommend.API.Services
 {
-    public class UserService:IUserService
+    public class ContactService:IContactService
     {
-        private readonly string _userServiceUrl;
+        private readonly string _contactServiceUrl;
         private readonly IHttpClient _httpClient;
         private readonly ILogger<UserService> _logger;
-
-        public UserService(IHttpClient httpClient, IDnsQuery dnsQuery, IOptions<ServiceDiscoveryOptions> options, ILogger<UserService> logger)
+        public ContactService(IHttpClient httpClient, IDnsQuery dnsQuery, IOptions<ServiceDiscoveryOptions> options, ILogger<UserService> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
@@ -26,19 +24,19 @@ namespace Contact.API.Services
             var addressList = address.First().AddressList;
             var host = address.First().AddressList.Any() ? addressList.First().ToString() : address.First().HostName;
             var port = address.First().Port;
-            _userServiceUrl = $"http://{host}:{port}/";
+            _contactServiceUrl = $"http://{host}:{port}/";
         }
-        public async Task<UserIdentity> GetBaseUserInfoAsync(int userId)
+
+        public async Task<List<Contact>> GetContactsByUserId(int userId)
         {
-           
             try
             {
-              
-                var response = await _httpClient.GetStringAsync($"{_userServiceUrl}" + "api/users/baseinfo/"+userId);
+
+                var response = await _httpClient.GetStringAsync($"{_contactServiceUrl}" + "api/contacts/" + userId);
                 if (!string.IsNullOrEmpty(response))
                 {
-                    var result = JsonConvert.DeserializeObject<UserIdentity>(response);                  
-                 
+                    var result = JsonConvert.DeserializeObject<List<Contact>>(response);
+
                     return result;
                 }
             }

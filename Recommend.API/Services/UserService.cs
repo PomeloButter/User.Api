@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using Contact.API.Dots;
-using DnsClient;
+using Resilience;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Resilience;
-
-namespace Contact.API.Services
+using Recommend.API.Dtos;
+using DnsClient;
+namespace Recommend.API.Services
 {
     public class UserService:IUserService
     {
@@ -22,7 +19,7 @@ namespace Contact.API.Services
         {
             _httpClient = httpClient;
             _logger = logger;
-            var address = dnsQuery.ResolveService("service.consul", options.Value.ContactServiceName);
+            var address = dnsQuery.ResolveService("service.consul", options.Value.UserServiceName);
             var addressList = address.First().AddressList;
             var host = address.First().AddressList.Any() ? addressList.First().ToString() : address.First().HostName;
             var port = address.First().Port;

@@ -1,6 +1,6 @@
 ﻿using Project.Domain.AggregatesModel;
 
-namespace Project.API.Applications.DomainEventHandlers
+namespace Project.API.Applications.IntegrationEvents
 {
     public class ProjectJoinedIntegrationEvent
     {

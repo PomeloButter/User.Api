@@ -15,7 +15,8 @@ namespace User.Identity
                 new ApiResource("gateway_api","gateway api service"),
                 new ApiResource("contact_api","contact api service"),
                 new ApiResource("user_api","user api service"),
-                new ApiResource("project_api","project api service")
+                new ApiResource("project_api","project api service"),
+                new ApiResource("recommend_api","recommend api service")
             };
         }
         public static IEnumerable<Client> GetClients()
@@ -36,6 +37,7 @@ namespace User.Identity
                         "contact_api",
                         "user_api",
                         "project_api",
+                        "recommend_api",
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.OfflineAccess,

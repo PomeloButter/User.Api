@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DotNetCore.CAP;
 using MediatR;
+using Project.API.Applications.IntegrationEvents;
 using Project.Domain.Events;
 
 namespace Project.API.Applications.DomainEventHandlers
@@ -20,7 +21,12 @@ namespace Project.API.Applications.DomainEventHandlers
         {
            var @event=new ProjectCreatedIntegrationEvent()
            {
-               Projectid = notification.Project.Id,
+               ProjectId = notification.Project.Id,
+               Company = notification.Project.Company,
+               Finstage = notification.Project.FinStage,
+               Introduction = notification.Project.Introduction,
+               ProjectAvatar = notification.Project.Avator,
+               Tags = notification.Project.Tags,
                CreateTime = DateTime.Now,
                UserId = notification.Project.UserId
            };

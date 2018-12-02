@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Consul;
 using Contact.API.Data;
 using Contact.API.Dots;
 using Contact.API.IntegrationEvents.EventHandling;
@@ -12,7 +13,9 @@ using DnsClient;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,12 +42,23 @@ namespace Contact.API
                 x.MongoContactDatabase = Configuration["MongoContactDatabase"].ToString();
             });
             services.Configure<ServiceDiscoveryOptions>(Configuration.GetSection("ServiceDiscovery"));
+            //注册consul
+            services.AddSingleton<IConsulClient>(p => new ConsulClient(cfg =>
+            {
+                var serviceConfiguration = p.GetRequiredService<IOptions<ServiceDiscoveryOptions>>().Value;
+
+                if (!string.IsNullOrEmpty(serviceConfiguration.Consul.HttpEndpoint))
+                {
+                    // if not configured, the client will use the default value "127.0.0.1:8500"
+                    cfg.Address = new Uri(serviceConfiguration.Consul.HttpEndpoint);
+                }
+            }));
             services.AddSingleton<IDnsQuery>(p =>
             {
                 var serviceConfiguration = p.GetRequiredService<IOptions<ServiceDiscoveryOptions>>().Value;
                 return new LookupClient(serviceConfiguration.Consul.DnsEndpoint.ToIPEndPoint());
-            });
-
+            });          
+            
             //注册全局 单例
             services.AddSingleton(typeof(ResilienceClientFactory), sp =>
             {
@@ -87,23 +101,75 @@ namespace Contact.API
                     d.DiscoveryServerHostName = "localhost";
                     d.DiscoveryServerPort = 8500;
                     d.CurrentNodeHostName = "localhost";
-                    d.CurrentNodePort = 5801;
+                    d.CurrentNodePort = 5002;
                     d.NodeId = 2;
-                    d.NodeName = "CAP NO.2 Node";
+                    d.NodeName = "CAP Contact Node";
                 });
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, IOptions<ServiceDiscoveryOptions> serviceOptions, IConsulClient consul)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            applicationLifetime.ApplicationStarted.Register(() => { RegisterService(app, serviceOptions, consul); });
+            applicationLifetime.ApplicationStopped.Register(() => { DeRegisterService(app, serviceOptions, consul); });
             app.UseAuthentication();
             app.UseCap();
             app.UseMvc();
+        }
+        private void RegisterService(IApplicationBuilder app, IOptions<ServiceDiscoveryOptions> serviceOptions, IConsulClient consul)
+        {
+            var features = app.Properties["server.Features"] as FeatureCollection;
+            if (features != null)
+            {
+                var addresses = features.Get<IServerAddressesFeature>()
+                    .Addresses
+                    .Select(p => new Uri(p));
+
+                foreach (var address in addresses)
+                {
+                    var serviceId = $"{serviceOptions.Value.ContactServiceName}_{address.Host}:{address.Port}";
+
+                    var httpCheck = new AgentServiceCheck()
+                    {
+                        DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1),
+                        Interval = TimeSpan.FromSeconds(30),
+                        HTTP = new Uri(address, "HealthCheck").OriginalString
+                    };
+
+                    var registration = new AgentServiceRegistration()
+                    {
+                        Checks = new[] { httpCheck },
+                        Address = address.Host,
+                        ID = serviceId,
+                        Name = serviceOptions.Value.ContactServiceName,
+                        Port = address.Port
+                    };
+
+                    consul.Agent.ServiceRegister(registration).GetAwaiter().GetResult();
+                }
+            }
+        }
+
+        private void DeRegisterService(IApplicationBuilder app, IOptions<ServiceDiscoveryOptions> serviceOptions, IConsulClient consul)
+        {
+            var features = app.Properties["server.Features"] as FeatureCollection;
+            if (features != null)
+            {
+                var addresses = features.Get<IServerAddressesFeature>()
+                    .Addresses
+                    .Select(p => new Uri(p));
+
+                foreach (var address in addresses)
+                {
+                    var serviceId = $"{serviceOptions.Value.ContactServiceName}_{address.Host}:{address.Port}";
+                    consul.Agent.ServiceDeregister(serviceId).GetAwaiter().GetResult();
+                }
+            }
         }
     }
 }

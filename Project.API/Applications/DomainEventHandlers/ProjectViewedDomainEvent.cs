@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DotNetCore.CAP;
 using MediatR;
+using Project.API.Applications.IntegrationEvents;
 using Project.Domain.Events;
 
 namespace Project.API.Applications.DomainEventHandlers
