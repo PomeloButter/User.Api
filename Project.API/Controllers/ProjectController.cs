@@ -56,6 +56,10 @@ namespace Project.API.Controllers
             project.UserId = UserIdentity.UserId;
             var comand = new CreateProjectCommand {Project = project};
             var returnProject = await _mediator.Send(comand);
+            if (returnProject==null)
+            {
+                throw new ArgumentNullException("创建项目失败");
+            }
             return Ok(returnProject);
         }
 

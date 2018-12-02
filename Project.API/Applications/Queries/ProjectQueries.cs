@@ -1,21 +1,24 @@
 ﻿using System.Threading.Tasks;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using Project.Infrastructure;
 
 namespace Project.API.Applications.Queries
 {
     public class ProjectQueries : IProjectQueries
     {
-        private readonly string _connstring;
+        private readonly ProjectContext _context;
 
-        public ProjectQueries(string connstring)
+
+        public ProjectQueries(ProjectContext context)
         {
-            _connstring = connstring;
+            _context = context;
         }
 
         public async Task<dynamic> GetProjectByUserId(int userId)
         {
-            using (var conn = new MySqlConnection(_connstring))
+            using (var conn = _context.Database.GetDbConnection())
             {
                 conn.Open();
                 var sql =
@@ -31,7 +34,7 @@ namespace Project.API.Applications.Queries
 
         public async Task<dynamic> GetProjectDetail(int projectId)
         {
-            using (var conn = new MySqlConnection(_connstring))
+            using (var conn = _context.Database.GetDbConnection())
             {
                 conn.Open();
                 var sql = @"SELECT 

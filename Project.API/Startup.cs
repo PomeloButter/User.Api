@@ -43,9 +43,7 @@ namespace Project.API
                     });
             });
             services.AddScoped<IRecommendService, RecommendService>();
-            services.AddScoped<IProjectQueries, ProjectQueries>(p=>
-                new ProjectQueries(Configuration.GetConnectionString("mysql")
-                ));
+            services.AddScoped<IProjectQueries, ProjectQueries>();
             services.AddScoped<IProjectRepository, ProjectRepository>(p =>            
                 new ProjectRepository(p.GetRequiredService<ProjectContext>())
             );
