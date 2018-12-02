@@ -89,7 +89,7 @@ namespace Recommend.API
 
             services.AddCap(option =>
             {
-                option.UseEntityFramework<RecommendContext>();
+                option.UseMySql(Configuration.GetConnectionString("capmysql"));
                 option.UseRabbitMQ("localhost");
                 option.UseDashboard();
                 option.UseDiscovery(d =>

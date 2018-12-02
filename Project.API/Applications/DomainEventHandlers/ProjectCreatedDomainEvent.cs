@@ -17,9 +17,9 @@ namespace Project.API.Applications.DomainEventHandlers
             _capPublisher = capPublisher;
         }
 
-        public Task Handle(ProjectCreatedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(ProjectCreatedEvent notification, CancellationToken cancellationToken)
         {
-           var @event=new ProjectCreatedIntegrationEvent()
+           var projectCreatedIntegrationEvent = new ProjectCreatedIntegrationEvent()
            {
                ProjectId = notification.Project.Id,
                Company = notification.Project.Company,
@@ -30,8 +30,8 @@ namespace Project.API.Applications.DomainEventHandlers
                CreateTime = DateTime.Now,
                UserId = notification.Project.UserId
            };
-            _capPublisher.Publish("finbook.projectapi.projectcreated",@event);
-            return Task.CompletedTask;
+           await _capPublisher.PublishAsync("pomelobutter.projectCreate", projectCreatedIntegrationEvent);
+            
         }
     }
 }

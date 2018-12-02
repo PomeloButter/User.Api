@@ -20,7 +20,8 @@ namespace Recommend.API.IntegrationEventHandlers
             _userService = userService;
             _contactService = contactService;
         }
-        [CapSubscribe("finbook.projectapi.projectcreated")]
+    
+        [CapSubscribe("pomelobutter.projectCreate")]
         public async Task CreatedRecommendFromProject(ProjectCreatedIntegrationEvent @event)
         {
 

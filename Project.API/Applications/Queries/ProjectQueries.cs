@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 using Project.Infrastructure;
+using System.Threading.Tasks;
 
 namespace Project.API.Applications.Queries
 {

@@ -37,7 +37,7 @@ namespace Project.API
             services.AddMediatR();
             services.AddDbContext<ProjectContext>(option =>
             {
-                option.UseMySql(Configuration.GetConnectionString("mysql"),p =>
+                option.UseMySQL(Configuration.GetConnectionString("mysql"),p =>
                     {
                         p.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
                     });
